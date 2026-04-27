@@ -14,8 +14,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-https://github.com/user-attachments/assets/your-video-asset-id
-
 Voice Fleet Assistant is a browser-based voice assistant that lets truck drivers report maintenance issues, receive safety guidance, and notify dispatch. The driver speaks, the system reasons over the transcript using a Groq LLM, returns a short voice-safe response, speaks it aloud via ElevenLabs, and logs the issue for dispatch and maintenance.
 
 If Groq is unavailable, the system automatically falls back to local rule-based safety logic so drivers are never left without a response.
@@ -99,7 +97,7 @@ Open the web interface and speak directly into your browser. The assistant will 
 | **Log** | The incident is written to a JSON log for dispatch and maintenance review |
 | **Fallback** | If Groq is unavailable, local rule-based safety logic handles the response automatically |
 
-> Output is constrained to a conservative decision set — the system flags and routes; it does not make autonomous safety calls.
+> Output is constrained to a conservative decision set, the system flags and routes; it does not make autonomous safety calls.
 
 
 
