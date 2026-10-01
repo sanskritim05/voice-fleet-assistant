@@ -1,18 +1,26 @@
+from __future__ import annotations
+
 import base64
+import logging
+
 import requests
-from app.config import ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID
+
+from app import config
+
+logger = logging.getLogger(__name__)
 
 
 def generate_speech_base64(text: str) -> str | None:
-    if not ELEVENLABS_API_KEY:
+    """Return the spoken response as a data URL, or None so the browser can speak it instead."""
+    if not config.ELEVENLABS_API_KEY:
         return None
 
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}"
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{config.ELEVENLABS_VOICE_ID}"
 
     headers = {
         "Accept": "audio/mpeg",
         "Content-Type": "application/json",
-        "xi-api-key": ELEVENLABS_API_KEY,
+        "xi-api-key": config.ELEVENLABS_API_KEY,
     }
 
     payload = {
@@ -26,10 +34,14 @@ def generate_speech_base64(text: str) -> str | None:
         },
     }
 
-    response = requests.post(url, headers=headers, json=payload, timeout=30)
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=30)
+    except requests.RequestException as error:
+        logger.warning("ElevenLabs request failed: %s", error)
+        return None
 
     if response.status_code != 200:
-        print("ElevenLabs error:", response.status_code, response.text)
+        logger.warning("ElevenLabs error %s: %s", response.status_code, response.text[:200])
         return None
 
     audio_base64 = base64.b64encode(response.content).decode("utf-8")

@@ -3,62 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fleet Voice Ops Console</title>
+  <title>Fleet Voice</title>
+  <meta name="description" content="Hands-free incident reporting for truck drivers: speak an issue, get spoken safety guidance, and route it to dispatch." />
+  <meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#141413" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="48x48" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div>
-        <h1>Voice Check-In</h1>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-critical" viewBox="0 0 24 24"><path d="M12 3.5 2.5 20h19L12 3.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4M12 17v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-warning" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7.5v5.5M12 16.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-low" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="m8 12.5 2.6 2.5L16 9.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/></symbol>
+    <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4 5v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.2 14a7 7 0 1 0 1.3-6.5L4 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 10.5c3-1.2 5.8-1.2 8.5-1.2s5.5 0 8.5 1.2M10 14.2 6.5 20M14 14.2l3.5 5.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="17" y="13" width="4" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M19 19v.5a2.5 2.5 0 0 1-2.5 2.5H13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17v.01" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6l-7-3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand-group">
+      <a class="brand" href="/" data-nav="/">Fleet Voice</a>
+      <span id="roleLabel" class="role-label" hidden></span>
+    </div>
+
+    <div class="header-right">
+      <div class="system" id="systemStatus" aria-label="System status" hidden>
+        <span class="pill" id="reasoningPill" title="Reasoning engine"><span class="dot"></span><span class="pill-text">Connecting</span></span>
+        <span class="pill" id="voicePill" title="Voice output"><span class="dot"></span><span class="pill-text">Voice</span></span>
       </div>
-    </header>
+      <a id="switchRole" class="switch-role" href="/" data-nav="/" hidden>Switch role</a>
+    </div>
+  </header>
 
-    <section class="main-card">
-      <div class="left-panel">
-        <p class="panel-label">Driver Input</p>
-        <h2>Press and hold. Speak once.</h2>
-        <p class="subtext">
-          Report an issue or send a dispatch update. You get spoken guidance and the event is logged.
-        </p>
+  <main>
+    <!-- ROLE PICKER -->
+    <section id="view-picker" class="view picker" hidden>
+      <h1 class="picker-title">Who's using Fleet Voice?</h1>
+      <p class="picker-sub">Choose your role. You can switch at any time.</p>
 
-        <button id="recordButton" class="talk-button">
-          <span class="mic">🎙</span>
-          <strong>Hold to Talk</strong>
-        </button>
-
-        <p id="status" class="status-text">Ready when you are.</p>
+      <div class="roles">
+        <a class="role-card" href="/driver" data-nav="/driver">
+          <svg class="role-icon" aria-hidden="true"><use href="#i-wheel"/></svg>
+          <span class="role-name">I'm driving</span>
+          <span class="role-desc">Report a problem or send dispatch a message without taking your eyes off the road. You'll hear what to do next.</span>
+          <span class="role-go">Start reporting <span aria-hidden="true">&rarr;</span></span>
+        </a>
+        <a class="role-card" href="/dispatch" data-nav="/dispatch">
+          <svg class="role-icon" aria-hidden="true"><use href="#i-headset"/></svg>
+          <span class="role-name">I'm in dispatch</span>
+          <span class="role-desc">See incidents from the fleet as drivers report them, then acknowledge and resolve them.</span>
+          <span class="role-go">Open the console <span aria-hidden="true">&rarr;</span></span>
+        </a>
       </div>
+    </section>
 
-      <div id="actionBox" class="right-panel neutral">
-        <div class="guidance-head">
-          <p class="label">Current Guidance</p>
-          <span id="severityBadge" class="severity-badge neutral">Standby</span>
+    <!-- DRIVER VIEW -->
+    <section id="view-driver" class="view" hidden>
+      <div class="cab-grid">
+        <div class="talk">
+          <p class="unit">Truck 8821 &middot; Driver 001</p>
+          <h1 class="talk-title">What's going on with the truck?</h1>
+          <p class="talk-sub">Describe a problem or leave a message for dispatch. You'll hear what to do next.</p>
+
+          <div class="mic">
+            <div class="orb-wrap">
+              <canvas id="levelRing" class="level-ring" width="360" height="360" aria-hidden="true"></canvas>
+              <button id="recordButton" class="orb" aria-pressed="false" aria-label="Start speaking">
+                <svg class="orb-icon" id="orbIcon"><use href="#i-mic"/></svg>
+              </button>
+            </div>
+            <div class="mic-text">
+              <p id="orbLabel" class="orb-label">Tap to speak</p>
+              <p id="status" class="status" role="status" aria-live="polite">or hold <kbd>Space</kbd></p>
+            </div>
+          </div>
+
+          <section class="thread-block" aria-live="polite">
+            <div class="thread-head">
+              <h2 class="small-heading">Conversation</h2>
+              <button id="newReport" class="text-btn" type="button" hidden>Start a new report</button>
+            </div>
+            <ol id="thread" class="thread">
+              <li class="thread-empty">Nothing yet.</li>
+            </ol>
+          </section>
+
+          <form id="typeForm" class="type-form" autocomplete="off">
+            <label for="typeInput" class="sr-only">Type a report</label>
+            <input id="typeInput" type="text" maxlength="1000" placeholder="Prefer to type? Write it here" />
+            <button type="submit" class="send">Send</button>
+          </form>
+
+          <div class="examples">
+            <p class="small-heading">Examples</p>
+            <ul>
+              <li><button class="chip" type="button">My brakes are making a grinding noise.</button></li>
+              <li><button class="chip" type="button">Tire pressure light just came on.</button></li>
+              <li><button class="chip" type="button">Engine temperature is rising.</button></li>
+              <li><button class="chip" type="button">Tell dispatch I'm 30 minutes late.</button></li>
+            </ul>
+          </div>
         </div>
-        <h2 id="decision">Standing By</h2>
-        <p id="responseText" class="guidance">Speak to get a recommendation and next steps.</p>
 
-        <audio id="audioPlayer" controls hidden></audio>
+        <article id="guidance" class="guidance" data-severity="idle" aria-live="polite">
+          <header class="guidance-head">
+            <span id="severityBadge" class="badge" data-severity="idle"><span>Waiting for a report</span></span>
+            <span id="issueRef" class="issue-ref"></span>
+          </header>
+
+          <h2 id="decision" class="decision">Standing by</h2>
+          <p id="responseText" class="response">When you report something, the recommended next step will appear here and be read aloud.</p>
+
+          <button id="replayButton" class="text-btn" type="button" hidden><svg><use href="#i-replay"/></svg>Hear it again</button>
+
+          <section class="actions-block" id="actionsBlock" hidden>
+            <h3 class="small-heading">What Fleet Voice did</h3>
+            <ul id="actionsList" class="actions"></ul>
+          </section>
+
+          <details class="trace" id="traceBlock" hidden>
+            <summary>Processing details</summary>
+            <ol id="pipeline" class="pipeline">
+              <li data-step="heard"><span class="step-name">Heard</span><span class="step-meta">&mdash;</span></li>
+              <li data-step="reason"><span class="step-name">Assessed</span><span class="step-meta">&mdash;</span></li>
+              <li data-step="floor"><span class="step-name">Safety check</span><span class="step-meta">&mdash;</span></li>
+              <li data-step="tools"><span class="step-name">Tools</span><span class="step-meta">&mdash;</span></li>
+              <li data-step="voice"><span class="step-name">Spoken</span><span class="step-meta">&mdash;</span></li>
+              <li data-step="log"><span class="step-name">Logged</span><span class="step-meta">&mdash;</span></li>
+            </ol>
+          </details>
+        </article>
       </div>
     </section>
 
-    <section class="details-grid">
-      <div class="mini-card">
-        <h3>Actions Taken</h3>
-        <ul id="actionsList">
-          <li>No actions yet</li>
-        </ul>
+    <!-- DISPATCH VIEW -->
+    <section id="view-dispatch" class="view" hidden>
+      <div class="dispatch-head">
+        <h1 class="dispatch-title">Incidents</h1>
+        <p class="live">Updated <span id="lastUpdated">&mdash;</span></p>
       </div>
+      <p id="storageNote" class="storage-note" hidden>Demo storage: incidents live in temporary memory and can disappear. Connect Upstash Redis to keep them.</p>
 
-      <div class="mini-card">
-        <h3>Recent Log Entries</h3>
-        <div id="issues" class="trip-log"></div>
+      <dl class="kpis">
+        <div class="kpi" data-severity="critical">
+          <dt><svg><use href="#i-critical"/></svg>Open critical</dt>
+          <dd id="kpiCritical">&ndash;</dd>
+        </div>
+        <div class="kpi" data-severity="warning">
+          <dt><svg><use href="#i-warning"/></svg>Open warnings</dt>
+          <dd id="kpiWarning">&ndash;</dd>
+        </div>
+        <div class="kpi">
+          <dt>Trucks affected</dt>
+          <dd id="kpiTrucks">&ndash;</dd>
+        </div>
+        <div class="kpi">
+          <dt>Resolved</dt>
+          <dd id="kpiResolved">&ndash;<span class="kpi-of" id="kpiTotal"></span></dd>
+        </div>
+      </dl>
+
+      <div class="dispatch-grid">
+        <section class="feed">
+          <div class="filters" role="group" aria-label="Filter incidents">
+            <div class="seg" id="severityFilter">
+              <button class="seg-btn is-active" data-value="">All</button>
+              <button class="seg-btn" data-value="critical">Critical</button>
+              <button class="seg-btn" data-value="warning">Warning</button>
+              <button class="seg-btn" data-value="low">Low</button>
+            </div>
+            <label class="select-wrap">
+              <span class="sr-only">Status</span>
+              <select id="statusFilter">
+                <option value="">Any status</option>
+                <option value="open">Open</option>
+                <option value="acknowledged">Acknowledged</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </label>
+          </div>
+          <ul id="incidentList" class="incidents"></ul>
+        </section>
+
+        <aside class="sidebar">
+          <h2 class="small-heading">By system</h2>
+          <div id="categoryChart" class="bars" role="table" aria-label="Incidents by category"></div>
+          <div id="chartTip" class="chart-tip" hidden></div>
+
+          <h2 class="small-heading how-heading">How reports are assessed</h2>
+          <ol class="how-list">
+            <li>A language model talks with the driver, asks a follow-up question when a report is vague, and acts through tools: logging the incident, alerting dispatch, looking up the truck.</li>
+            <li>Safety rules audit every decision. They can raise a severity or force an escalation, but never lower one, and critical reports are never held up by questions.</li>
+            <li>If the model can't be reached, the rules answer on their own.</li>
+          </ol>
+        </aside>
       </div>
     </section>
-
-    <textarea id="transcript" hidden></textarea>
   </main>
 
+  <footer class="foot">
+    <span>Built with FastAPI, Groq Whisper, ElevenLabs and gpt-oss</span>
+    <a href="/docs">API documentation</a>
+  </footer>
+
+  <audio id="audioPlayer" hidden></audio>
   <script src="/static/app.js"></script>
 </body>
 </html>

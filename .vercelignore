@@ -1,0 +1,12 @@
+.venv
+venv
+.env
+.git
+.github
+.pytest_cache
+__pycache__
+tests
+docs
+evals
+app/data/issues.json
+Dockerfile

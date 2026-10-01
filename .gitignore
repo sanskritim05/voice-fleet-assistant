@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets
+.env
+
+# Runtime data
+app/data/issues.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.vercel
