@@ -13,6 +13,7 @@ A driver reports a problem by voice. The agent asks a follow-up question if it n
 
 
 ## What it does
+| | |
 |---|---|
 | **Multi-turn voice agent** | Tap the mic (or hold <kbd>Space</kbd>) and talk. Vague reports get one short follow-up question ("Which light is on?"); clear hazards get acted on immediately. Speech-to-text is Groq Whisper, so it behaves the same in Safari, Chrome and Firefox. Replies are spoken with ElevenLabs, or the browser's voice. |
 | **Tool calling** | The model (`gpt-oss-120b` on Groq) acts through five tools: `log_incident`, `escalate_to_dispatch`, `send_dispatch_message`, `get_truck_service_history`, `find_nearest_repair_shop`. Every call shows up for the driver and the dispatcher. |
