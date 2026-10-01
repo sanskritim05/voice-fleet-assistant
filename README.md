@@ -1,5 +1,3 @@
-<div align="center">
-
 # Fleet Voice
 
 **A voice agent for truck drivers that knows when to stop asking questions.**
