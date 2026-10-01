@@ -12,9 +12,7 @@ A driver reports a problem by voice. The agent asks a follow-up question if it n
 ![Groq](https://img.shields.io/badge/LLM-Groq-F55036)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-<img src="docs/driver.png" alt="Driver view: the agent asks a follow-up question, then logs a warning and alerts dispatch" width="900" />
 
-</div>
 
 ## What it does
 
