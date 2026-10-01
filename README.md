@@ -104,7 +104,7 @@ Open http://127.0.0.1:8000 and pick a role. API docs are at `/docs`.
 
 ## Deploy to Vercel
 
-The app runs on Vercel as a single Python function ([`api/index.py`](api/index.py), [`vercel.json`](vercel.json)).
+Vercel detects the FastAPI app in [`app/main.py`](app/main.py) automatically and runs it as a single Python function. [`vercel.json`](vercel.json) only raises the time limit so a conversation turn with several tool calls can finish.
 
 1. Import the repository in Vercel. No build settings are needed.
 2. Under **Storage**, add **Upstash for Redis** (free tier) and connect it to the project. This sets `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which the app picks up automatically. Serverless functions don't keep files or memory between requests, so incidents and in-progress conversations live in Redis.
@@ -173,7 +173,6 @@ evals/
   run.py           Runner and report
   results.md       Latest results (results-baseline.md: first run)
 static/            Front end (vanilla JS, no build step)
-api/index.py       Vercel entrypoint
 tests/
 ```
 
